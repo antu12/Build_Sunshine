@@ -31,7 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
+    private final String LOG_TAG =  MainActivity.class.getSimpleName();
     ArrayAdapter mForcastAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return  super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocationInMap(){
+        String location = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(
+                getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                .appendQueryParameter("q", location).build();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
+        if (intent.resolveActivity(getPackageManager()) != null){
+            startActivity(intent);
+        }else {
+            Log.d(LOG_TAG, "Location not found!");
+        }
     }
 
     private void updateWeather() {
@@ -316,6 +330,8 @@ public class MainActivity extends AppCompatActivity {
             // This will only happen if there was an error getting or parsing the forecast.
             return null;
         }
+
+
 
 
     }
